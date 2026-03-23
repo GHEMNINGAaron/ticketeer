@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ticketeer/screen/tickets_board.dart';
+import 'package:ticketeer/screen/main_layout.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +11,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Team Tickets',
+      title: 'Ticketeer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Roboto',
         brightness: Brightness.dark,
       ),
-      home: const TeamTicketsBoard(),
+      home: const MainLayout(),
     );
   }
 }
