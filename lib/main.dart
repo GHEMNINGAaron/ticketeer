@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ticketeer/screen/main_layout.dart';
+import 'package:ticketeer/screen/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
         brightness: Brightness.dark,
       ),
-      home: const MainLayout(),
+      home: const LoginScreen(),
     );
   }
 }

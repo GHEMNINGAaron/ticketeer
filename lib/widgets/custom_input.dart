@@ -1,63 +1,26 @@
-/*import 'package:flutter/material.dart';
-
-
-class Input extends StatefulWidget {
-  const Input({super.key});
-
-  @override
-  State<Input> createState() => _InputState();
-}
-
-class _InputState extends State<Input> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: TextFormField(
-      
-              style: TextStyle(
-                fontSize: 10
-              ),
-              decoration: InputDecoration(
-                label: Text("Email"),
-                hintText:("veuillez saisir votre mail"),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20)
-                )
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) { 
-                  return "veuillez saisir votre mail ";
-      
-                }
-                return null;
-              }
-              
-            ),
-    );
-  }
-}*/ 
 import 'package:flutter/material.dart';
 
-
-
-class Input extends StatefulWidget {
+class CustomInput extends StatefulWidget {
   final String hint;
   final bool isPassword;
   final bool isEmail;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
-  const Input({
-    super.key,
+  const CustomInput({
+    Key? key,
     required this.hint,
     this.isPassword = false,
     this.isEmail = false,
-  });
+    this.controller,
+    this.validator,
+  }) : super(key: key);
 
   @override
-  State<Input> createState() => _InputState();
+  State<CustomInput> createState() => _CustomInputState();
 }
 
-class _InputState extends State<Input> {
+class _CustomInputState extends State<CustomInput> {
   bool obscure = true;
 
   @override
@@ -65,6 +28,8 @@ class _InputState extends State<Input> {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       child: TextFormField(
+        controller: widget.controller,
+        validator: widget.validator,
         keyboardType:
             widget.isEmail ? TextInputType.emailAddress : TextInputType.text,
         obscureText: widget.isPassword ? obscure : false,
