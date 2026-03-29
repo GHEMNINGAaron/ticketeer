@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ticketeer/providers/auth_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -217,40 +219,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _handleLogout() {
-    // Afficher une boîte de dialogue de confirmation
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1C2333),
-        title: const Text(
-          'Déconnexion',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: const Text(
-          'Êtes-vous sûr de vouloir vous déconnecter ?',
-          style: TextStyle(color: Colors.grey),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () {
-              // TODO: Implémenter la logique de déconnexion
-              Navigator.pop(context);
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const LoginScreen()),
-              // );
-            },
-            child: const Text(
-              'Déconnexion',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF1C2333),
+      title: const Text(
+        'Déconnexion',
+        style: TextStyle(color: Colors.white),
       ),
-    );
-  }
+      content: const Text(
+        'Êtes-vous sûr de vouloir vous déconnecter ?',
+        style: TextStyle(color: Colors.grey),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+          onPressed: () async {
+            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+            await authProvider.signOut();
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: const Text(
+            'Déconnexion',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
