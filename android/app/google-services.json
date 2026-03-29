@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "59753976979",
+    "project_id": "ticketeer-eb1eb",
+    "storage_bucket": "ticketeer-eb1eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59753976979:android:80827dde5599696fbb2966",
+        "android_client_info": {
+          "package_name": "com.example.ticketeer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8LQzAPLozu90f4Xw4e6js_z8ZwnkvmCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

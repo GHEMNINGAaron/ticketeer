@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ticketeer/screen/main_layout.dart';
+import 'package:provider/provider.dart';
+import 'package:ticketeer/providers/auth_provider.dart';
 import '../widgets/custom_input.dart';
-import '../models/user.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -38,45 +38,45 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _handleSignUp() {
-    if (_formKey.currentState!.validate()) {
-      if (!_agreeToTerms) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please accept the terms and conditions'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Créer un nouvel utilisateur
-      final newUser = User(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim().toLowerCase(),
-        role: _selectedRole,
-        createdAt: DateTime.now(),
+Future<void> _handleSignUp() async {
+  if (_formKey.currentState!.validate()) {
+    if (!_agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please accept the terms and conditions'),
+          backgroundColor: Colors.red,
+        ),
       );
+      return;
+    }
 
-      // TODO: Enregistrer l'utilisateur dans Firebase/API
-      print('New User: ${newUser.toJson()}');
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-      // Afficher un message de succès
+    final success = await authProvider.signUp(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      name: _nameController.text.trim(),
+      role: _selectedRole,
+    );
+
+    if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Account created successfully!'),
           backgroundColor: Colors.green,
         ),
       );
-
-      // TODO: Naviguer vers MainLayout ou demander vérification email
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainLayout()),
+      // La navigation se fera automatiquement via AuthWrapper
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.errorMessage ?? 'Sign up failed'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
+}
 
   void _handleGitHubSignUp() {
     // TODO: Implémenter l'inscription via GitHub

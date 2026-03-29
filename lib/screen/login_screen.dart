@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ticketeer/screen/main_layout.dart';
+import 'package:provider/provider.dart';
+import 'package:ticketeer/providers/auth_provider.dart';
 import 'package:ticketeer/screen/signup_screen.dart';
 import '../widgets/custom_input.dart';
 
@@ -22,24 +23,41 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleSignIn() {
+   Future<void> _handleSignIn() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implémenter la logique de connexion
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       
-      // Pour l'instant, naviguer vers le MainLayout
-      Navigator.pushReplacement(
-         context,
-         MaterialPageRoute(builder: (context) => const MainLayout()),
+      final success = await authProvider.signIn(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Sign in failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleGitHubSignIn() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    final success = await authProvider.signInWithGitHub();
+
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.errorMessage ?? 'GitHub sign in failed'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
 
-  void _handleGitHubSignIn() {
-    // TODO: Implémenter la connexion GitHub
-    print('Sign in with GitHub');
-  }
 
   @override
   Widget build(BuildContext context) {
