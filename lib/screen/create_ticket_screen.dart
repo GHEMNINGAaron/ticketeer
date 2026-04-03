@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ticketeer/providers/team_provider.dart';
+import 'package:ticketeer/providers/ticket_provider.dart';
 import '../models/ticket.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_text_field.dart';
@@ -48,9 +50,21 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
     super.dispose();
   }
 
-  void _handleCreateTicket() {
+  Future<void> _handleCreateTicket() async {
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final ticketProvider = Provider.of<TicketProvider>(context, listen: false);
+      final teamProvider = Provider.of<TeamProvider>(context, listen: false);
+
+      if (teamProvider.currentTeam == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No team selected. Please select a team first.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
 
       final newTicket = Ticket(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -71,24 +85,36 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
         linkToGithub: _linkToGithub,
         githubIssueId:
             _linkToGithub ? _githubIssueController.text.trim() : null,
+        teamId: teamProvider.currentTeam!.id,
       );
 
-      // TODO: Sauvegarder dans Firestore
       print('New ticket created: ${newTicket.toJson()}');
+      final success = await ticketProvider.createTicket(newTicket);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ticket created successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
 
-      Navigator.pop(context, newTicket);
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ticket created successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(ticketProvider.errorMessage ?? 'Failed to create ticket'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final ticketProvider = Provider.of<TicketProvider>(context);
     return Scaffold(
       backgroundColor: const Color(0xFF0B1220),
       appBar: _buildAppBar(),
@@ -113,7 +139,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                   const SizedBox(height: 24),
                   _buildGitHubSection(),
                   const SizedBox(height: 32),
-                  _buildCreateButton(),
+                  _buildCreateButton(ticketProvider.isLoading),
                 ],
               ),
             ),
@@ -286,9 +312,9 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
     );
   }
 
-  Widget _buildCreateButton() {
+  Widget _buildCreateButton(bool isLoading) {
     return ElevatedButton(
-      onPressed: _handleCreateTicket,
+      onPressed: isLoading ? null : _handleCreateTicket,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
         minimumSize: const Size(double.infinity, 56),
