@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:ticketeer/providers/team_provider.dart';
+import 'package:ticketeer/providers/ticket_provider.dart';
 import 'package:ticketeer/screen/auth_warapper.dart';
 import 'package:provider/provider.dart';
 import 'package:ticketeer/providers/auth_provider.dart';
@@ -28,6 +30,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => TicketProvider()),
+        ChangeNotifierProvider(create: (_) => TeamProvider()),
       ],
       child: MaterialApp(
         title: 'Ticketeer',

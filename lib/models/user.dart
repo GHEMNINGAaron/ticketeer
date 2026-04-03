@@ -4,7 +4,6 @@ class User {
   final String email;
   final String role;
   final String? avatar;
-  final List<String> teams;
   final DateTime createdAt;
 
   User({
@@ -13,7 +12,6 @@ class User {
     required this.email,
     required this.role,
     this.avatar,
-    this.teams = const [],
     required this.createdAt,
   });
 
@@ -25,7 +23,6 @@ class User {
       'email': email,
       'role': role,
       'avatar': avatar,
-      'teams': teams,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -38,7 +35,6 @@ class User {
       email: json['email'] ?? '',
       role: json['role'] ?? 'Developer',
       avatar: json['avatar'],
-      teams: List<String>.from(json['teams'] ?? []),
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
@@ -61,7 +57,6 @@ class User {
       email: email ?? this.email,
       role: role ?? this.role,
       avatar: avatar ?? this.avatar,
-      teams: teams ?? this.teams,
       createdAt: createdAt ?? this.createdAt,
     );
   }
